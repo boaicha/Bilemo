@@ -28,7 +28,7 @@ class Product
     /**
      * @return string|null
      */
-    public function getId()
+    public function getId(): int|string|null
     {
         return $this->id;
     }
@@ -37,7 +37,7 @@ class Product
     /**
      * @return string|null
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -45,7 +45,7 @@ class Product
     /**
      * @param string|null $name
      */
-    public function setName($name)
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
@@ -53,7 +53,7 @@ class Product
     /**
      * @return int|null
      */
-    public function getPrice()
+    public function getPrice(): ?int
     {
         return $this->price;
     }
@@ -61,7 +61,7 @@ class Product
     /**
      * @param int|null $price
      */
-    public function setPrice($price)
+    public function setPrice(?int $price): void
     {
         $this->price = $price;
     }
@@ -69,7 +69,7 @@ class Product
     /**
      * @return string|null
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -77,7 +77,7 @@ class Product
     /**
      * @param string|null $description
      */
-    public function setDescription($description)
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }

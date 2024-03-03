@@ -7,11 +7,15 @@ use App\Repository\ProductRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
-    #[Route('/product', name: 'app_product')]
+
+
+    #[Route('/api/products', name: 'app_product', methods: ['GET'])]
     public function index(ManagerRegistry $doctrine): JsonResponse
     {
         $products = $doctrine
@@ -26,11 +30,10 @@ class ProductController extends AbstractController
                 'name' => $product->getName(),
                 'description' => $product->getDescription(),
                 'price' => $product->getPrice(),
-
             ];
         }
 
-        return $this->json($data);
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
     #[Route('/product/{id}', name: 'product_show', methods:['get'] )]
@@ -53,7 +56,7 @@ class ProductController extends AbstractController
         return $this->json($data);
     }
 
-        #[Route('/products/{id}', name: 'product_update', methods:['put', 'patch'] )]
+    #[Route('/product/{id}', name: 'product_update', methods:['put', 'patch'] )]
     public function update(ManagerRegistry $doctrine, Request $request, int $id): JsonResponse
     {
         $entityManager = $doctrine->getManager();
@@ -77,7 +80,7 @@ class ProductController extends AbstractController
 
         return $this->json($data);
     }
-    #[Route('/products/{id}', name: 'product_delete', methods:['delete'] )]
+    #[Route('/product/{id}', name: 'product_delete', methods:['delete'] )]
     public function delete(ManagerRegistry $doctrine, int $id): JsonResponse
     {
         $entityManager = $doctrine->getManager();

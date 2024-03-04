@@ -8,14 +8,11 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
-
-
-    #[Route('/api/products', name: 'app_product', methods: ['GET'])]
+    #[Route('/api/product', name: 'app_product')]
     public function index(ManagerRegistry $doctrine): JsonResponse
     {
         $products = $doctrine
@@ -30,13 +27,14 @@ class ProductController extends AbstractController
                 'name' => $product->getName(),
                 'description' => $product->getDescription(),
                 'price' => $product->getPrice(),
+
             ];
         }
 
-        return new JsonResponse($data, Response::HTTP_OK, [], true);
+        return $this->json($data);
     }
 
-    #[Route('/product/{id}', name: 'product_show', methods:['get'] )]
+    #[Route('/api/product/{id}', name: 'product_show', methods:['get'] )]
     public function show(ManagerRegistry $doctrine, int $id): JsonResponse
     {
         $product = $doctrine->getRepository(product::class)->find($id);
@@ -56,7 +54,7 @@ class ProductController extends AbstractController
         return $this->json($data);
     }
 
-    #[Route('/product/{id}', name: 'product_update', methods:['put', 'patch'] )]
+    #[Route('/api/products/{id}', name: 'product_update', methods:['put', 'patch'] )]
     public function update(ManagerRegistry $doctrine, Request $request, int $id): JsonResponse
     {
         $entityManager = $doctrine->getManager();
@@ -80,7 +78,7 @@ class ProductController extends AbstractController
 
         return $this->json($data);
     }
-    #[Route('/product/{id}', name: 'product_delete', methods:['delete'] )]
+    #[Route('/api/products/{id}', name: 'product_delete', methods:['delete'] )]
     public function delete(ManagerRegistry $doctrine, int $id): JsonResponse
     {
         $entityManager = $doctrine->getManager();

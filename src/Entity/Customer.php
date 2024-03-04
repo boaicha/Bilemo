@@ -23,10 +23,16 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstName;
 
     #[ORM\Column]
+    private ?string $username;
+
+    #[ORM\Column]
     private string $email;
 
     #[ORM\Column]
     private string $password;
+
+    #[ORM\Column]
+    private array $roles = [];
 
 
 //    /**
@@ -34,7 +40,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 //     */
 //    private $users;
 
-    #[ORM\OneToMany(mappedBy: "customer", targetEntity: User::class)]
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: "customer")]
     private Collection $users;
 
     public function getUsers(): Collection
@@ -107,9 +113,20 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getRoles()
+    public function getRoles(): array
     {
-        // TODO: Implement getRoles() method.
+        $roles = $this->roles;
+        // Guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 
     public function getPassword(): string
@@ -134,9 +151,14 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         // TODO: Implement eraseCredentials() method.
     }
 
-    public function getUsername()
+    public function getUsername(): string
     {
-        // TODO: Implement getUsername() method.
+        return $this->username;
+    }
+
+    public function setUsername(?string $username): void
+    {
+        $this->username = $username;
     }
 
     public function __call(string $name, array $arguments)
@@ -151,6 +173,3 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
 
 }
-
-
-

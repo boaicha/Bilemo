@@ -7,13 +7,12 @@ use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 class CustomerController extends AbstractController
 {
-    #[Route('/api/customer/{id}', name: 'get_customers', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route('/api/customer/{id}', name: 'get_customers', methods:['get'])]
     public function index(ManagerRegistry $doctrine , int $id): JsonResponse
     {
         $customer = $doctrine
@@ -44,15 +43,14 @@ class CustomerController extends AbstractController
             'email' => $customer->getEmail(),
             'users' => $userData
         ];
-/*
-        return $this->json($data);*/
-        return new JsonResponse($data, Response::HTTP_OK, [], true);
+
+        return $this->json($data);
 
         // retourn la liste des utilisateurs d'un client choisi par l'id
 
     }
 
-    #[Route('/customer/{idCustomer}/user/{idUser}', name: 'get_a_customer')]
+    #[Route('/api/customer/{idCustomer}/user/{idUser}', name: 'get_a_customer')]
     public function getAUserfromCustomerId(ManagerRegistry $doctrine , int $idCustomer, int $idUser): JsonResponse
     {
         $user = $doctrine
@@ -72,7 +70,7 @@ class CustomerController extends AbstractController
 
     }
 
-    #[Route('/customer/{idCustomer}/deleteUser/{idUser}', name: 'delete_a_customer')]
+    #[Route('/api/customer/{idCustomer}/deleteUser/{idUser}', name: 'delete_a_customer')]
     public function deleteUser(ManagerRegistry $doctrine , int $idCustomer, int $idUser): JsonResponse
     {
         $entityManager = $doctrine->getManager();
@@ -95,7 +93,7 @@ class CustomerController extends AbstractController
     }
 
 
-    #[Route('/customer/{idCustomer}/create', name: 'add_a_customer', methods:['POST'])]
+    #[Route('/api/customer/{idCustomer}/create', name: 'add_a_customer', methods:['POST'])]
     public function addUser(ManagerRegistry $doctrine , int $idCustomer, Request $request): JsonResponse
     {
         $entityManager = $doctrine->getManager();

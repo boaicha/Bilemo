@@ -20,24 +20,20 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // $product = new Product();
-        // $manager->persist($product);
 
         // COMMERCIAUX
         $usersData = [
-            ['name' => 'simon','first_name' => 'simon', 'username' => 'simoncharbonnier03@gmail.com', 'email' => 'simoncharbonnier03@gmail.com', 'roles' => ["ROLE_USER"]],
-            ['name' => 'john', 'first_name' => 'john', 'username' => 'johndoe@gmail.com', 'email' => 'johndoe@gmail.com', 'roles' => ["ROLE_USER"]],
-            ['name' => 'shaun', 'first_name' => 'shaun', 'username' =>'haunwinter@gmail.com','email' => 'shaunwinter@gmail.com', 'roles' => ["ROLE_USER"]],
-            ['name' => 'martina', 'first_name' => 'martina', 'username' => 'martinasnow@gmail.com','email' => 'martinasnow@gmail.com', 'roles' => ["ROLE_USER"]],
+            ['name' => 'simon', 'email' => 'simoncharbonnier03@gmail.com', 'roles' => ["ROLE_USER"]],
+            ['name' => 'john', 'email' => 'johndoe@gmail.com', 'roles' => ["ROLE_USER"]],
+            ['name' => 'shaun', 'email' => 'shaunwinter@gmail.com', 'roles' => ["ROLE_USER"]],
+            ['name' => 'martina', 'email' => 'martinasnow@gmail.com', 'roles' => ["ROLE_USER"]],
         ];
 
         foreach ($usersData as $data) {
             $customer = new Customer();
             $customer->setName($data['name']);
-            $customer->setFirstName($data['first_name']);
             $customer->setEmail($data['email']);
             $customer->setPassword($this->hasher->hashPassword($customer, 'password'));
-            $customer->setUsername($data['username']);
             $customer->setRoles($data['roles']);
 
             $manager->persist($customer);

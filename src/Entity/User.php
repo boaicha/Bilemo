@@ -19,18 +19,6 @@ class User
     #[ORM\Column]
     private ?string $email;
 
-    #[ORM\Column]
-    private ?string $password;
-
-
-//    /**
-//     * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="users")
-//     * @ORM\JoinColumn(nullable=false)
-//     */
-//    private $customer;
-
-    // #[ORM\Column]
-    // private array $roles = [];
 
     #[ORM\ManyToOne(targetEntity:Customer::class, inversedBy:"users")]
     #[ORM\JoinColumn(nullable:true)]
@@ -108,15 +96,7 @@ class User
         $this->customer = $customer;
     }
 
-    public function getRoles(): array
-    {
-        return $this->roles;
-    }
 
-    public function setRoles(array $roles): void
-    {
-        $this->roles = $roles;
-    }
 
 
 

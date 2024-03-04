@@ -20,12 +20,6 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $name;
 
     #[ORM\Column]
-    private ?string $firstName;
-
-    #[ORM\Column]
-    private ?string $username;
-
-    #[ORM\Column]
     private string $email;
 
     #[ORM\Column]
@@ -34,11 +28,6 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
-
-//    /**
-//     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="customer", cascade={"persist", "remove"})
-//     */
-//    private $users;
 
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: "customer")]
     private Collection $users;
@@ -80,21 +69,6 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         $this->name = $name;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    /**
-     * @param string|null $firstName
-     */
-    public function setFirstName(?string $firstName): void
-    {
-        $this->firstName = $firstName;
-    }
 
     /**
      * @return string|null
@@ -153,13 +127,9 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUsername(): string
     {
-        return $this->username;
+        return $this->email;
     }
 
-    public function setUsername(?string $username): void
-    {
-        $this->username = $username;
-    }
 
     public function __call(string $name, array $arguments)
     {

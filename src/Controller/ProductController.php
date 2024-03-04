@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,15 +15,24 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     #[Route('/api/product', name: 'app_product')]
-    public function index(ManagerRegistry $doctrine): JsonResponse
+    public function index(ManagerRegistry $doctrine, Request $request, PaginatorInterface $paginator): JsonResponse
     {
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 2);
+
         $products = $doctrine
             ->getRepository(Product::class)
             ->findAll();
 
+        $pagination = $paginator->paginate(
+            $products, // Sur quoi on pagine
+            $page,          // Le numero de la page actuelle
+            $limit          // limite des produits à afficher
+        );
+
         $data = [];
 
-        foreach ($products as $product) {
+        foreach ($pagination->getItems() as $product) {
             $data[] = [
                 'id' => $product->getId(),
                 'name' => $product->getName(),

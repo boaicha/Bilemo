@@ -1,13 +1,7 @@
-# controllers:
-#     resource:
-#         path: ../src/Controller/
-#         namespace: App\Controller
-#     type: attribute
 controllers:
-    resource: ../src/Controller/
-    type: annotation
-    prefix: /
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
 api_login_check:
     path: /api/login_check
-
-

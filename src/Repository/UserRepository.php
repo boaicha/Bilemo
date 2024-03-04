@@ -14,5 +14,15 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
 
     }
+    public function findUsersByCustomer(int $customerId)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.customer = :customerId')
+            ->setParameter('customerId', $customerId)
+            ->getQuery()
+            ->getResult();
+    }
+
+
 
 }

@@ -4,23 +4,35 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
-    #[Route('/product', name: 'app_product')]
-    public function index(ManagerRegistry $doctrine): JsonResponse
+    #[Route('/api/product', name: 'app_product')]
+    public function index(ManagerRegistry $doctrine, Request $request, PaginatorInterface $paginator): JsonResponse
     {
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 2);
+
         $products = $doctrine
             ->getRepository(Product::class)
             ->findAll();
 
+        $pagination = $paginator->paginate(
+            $products, // Sur quoi on pagine
+            $page,          // Le numero de la page actuelle
+            $limit          // limite des produits à afficher
+        );
+
         $data = [];
 
-        foreach ($products as $product) {
+        foreach ($pagination->getItems() as $product) {
             $data[] = [
                 'id' => $product->getId(),
                 'name' => $product->getName(),
@@ -33,7 +45,7 @@ class ProductController extends AbstractController
         return $this->json($data);
     }
 
-    #[Route('/product/{id}', name: 'product_show', methods:['get'] )]
+    #[Route('/api/product/{id}', name: 'product_show', methods:['get'] )]
     public function show(ManagerRegistry $doctrine, int $id): JsonResponse
     {
         $product = $doctrine->getRepository(product::class)->find($id);
@@ -53,7 +65,7 @@ class ProductController extends AbstractController
         return $this->json($data);
     }
 
-        #[Route('/products/{id}', name: 'product_update', methods:['put', 'patch'] )]
+    #[Route('/api/products/{id}', name: 'product_update', methods:['put', 'patch'] )]
     public function update(ManagerRegistry $doctrine, Request $request, int $id): JsonResponse
     {
         $entityManager = $doctrine->getManager();
@@ -77,7 +89,7 @@ class ProductController extends AbstractController
 
         return $this->json($data);
     }
-    #[Route('/products/{id}', name: 'product_delete', methods:['delete'] )]
+    #[Route('/api/products/{id}', name: 'product_delete', methods:['delete'] )]
     public function delete(ManagerRegistry $doctrine, int $id): JsonResponse
     {
         $entityManager = $doctrine->getManager();

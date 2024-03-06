@@ -1,5 +1,7 @@
 # BileMo
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e7f96e9448fc4fde978001c8463e5f9b)](https://app.codacy.com/gh/boaicha/Bilemo/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 Ce projet est réalisé dans le cadre de la formation de développeur d'application PHP/Symfony chez OpenClassrooms.
 
 La mission est de créer une api.

@@ -10,11 +10,45 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
-    #[Route('/api/product', name: 'app_product')]
+
+    /**
+     * Liste les produits
+
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des produits",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Product::class))
+     *     )
+     * )
+     * @OA\Response(
+     *      response=401,
+     *      description="JWT Token not found",
+     * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="Le page actuel d'affichage des produits",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter(
+     *      name="limit",
+     *      in="query",
+     *      description="Le nombre d'affichage des produits",
+     *      @OA\Schema(type="integer")
+     *  )
+     *
+     * @OA\Tag(name="products")
+     */
+    #[Route('/api/product', name: 'app_product', methods: 'GET')]
     public function index(ManagerRegistry $doctrine, Request $request, PaginatorInterface $paginator): JsonResponse
     {
         $page = $request->query->getInt('page', 1);
@@ -45,6 +79,27 @@ class ProductController extends AbstractController
         return $this->json($data);
     }
 
+    /**
+     * Retourne un produit spécifique
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne le produit",
+     *     @OA\JsonContent(
+     *        @Model(type=Product::class)
+     *     )
+     * )
+     * @OA\Response(
+     *      response=401,
+     *      description="JWT Token not found",
+     * )
+     *
+     * @OA\Response(
+     *      response=404,
+     *      description="Cette ressource n'existe pas.",
+     * )
+     *
+     * @OA\Tag(name="product")
+     */
     #[Route('/api/product/{id}', name: 'product_show', methods:['get'] )]
     public function show(ManagerRegistry $doctrine, int $id): JsonResponse
     {
@@ -52,7 +107,7 @@ class ProductController extends AbstractController
 
         if (!$product) {
 
-            return $this->json('No product found for id ' . $id, 404);
+            return $this->json('Cette ressource n\'existe pas');
         }
 
         $data =  [
@@ -65,45 +120,6 @@ class ProductController extends AbstractController
         return $this->json($data);
     }
 
-    #[Route('/api/products/{id}', name: 'product_update', methods:['put', 'patch'] )]
-    public function update(ManagerRegistry $doctrine, Request $request, int $id): JsonResponse
-    {
-        $entityManager = $doctrine->getManager();
-        $product = $entityManager->getRepository(product::class)->find($id);
-
-        if (!$product) {
-            return $this->json('No product found for id' . $id, 404);
-        }
-
-        $product->setName($request->request->get('name'));
-        $product->setDescription($request->request->get('description'));
-        $product->setPrice($request->request->get('Price'));
-        $entityManager->flush();
-
-        $data =  [
-            'id' => $product->getId(),
-            'name' => $product->getName(),
-            'description' => $product->getDescription(),
-            'price' => $product->getPrice(),
-        ];
-
-        return $this->json($data);
-    }
-    #[Route('/api/products/{id}', name: 'product_delete', methods:['delete'] )]
-    public function delete(ManagerRegistry $doctrine, int $id): JsonResponse
-    {
-        $entityManager = $doctrine->getManager();
-        $product = $entityManager->getRepository(Product::class)->find($id);
-
-        if (!$product) {
-            return $this->json('Aucun produit trouvé pour cet identifiant' . $id, 404);
-        }
-
-        $entityManager->remove($product);
-        $entityManager->flush();
-
-        return $this->json('Suppression réussie .' . $id);
-    }
 
 }
 

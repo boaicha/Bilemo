@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class CustomerController extends AbstractController
@@ -120,7 +121,7 @@ class CustomerController extends AbstractController
      * @OA\Tag(name="user")
      */
     #[Route('/api/customer/{idCustomer}/user/{idUser}', name: 'get_a_customer', methods:['get'])]
-    public function getAUserfromCustomerId(ManagerRegistry $doctrine , int $idCustomer, int $idUser, UserInterface $authenticatedUser): JsonResponse
+    public function getAUserfromCustomerId(ManagerRegistry $doctrine , int $idCustomer, int $idUser, UserInterface $authenticatedUser, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
 
         if ($authenticatedUser->getId() !== $idCustomer) {
@@ -145,7 +146,25 @@ class CustomerController extends AbstractController
         $data =  [
             'id' => $user->getId(),
             'name' => $user->getName(),
-            'firstname' => $user->getEmail()
+            'firstname' => $user->getEmail(),
+            'links' => [
+                'self' => [
+                    'href' => $urlGenerator->generate('get_a_customer', ['idCustomer' => $idCustomer, 'idUser' => $idUser], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'type' => 'GET',
+                ],
+                'all' => [
+                    'href' => $urlGenerator->generate('get_customers', ['id' => $idCustomer], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'type' => 'GET',
+                ],
+                'delete' => [
+                    'href' => $urlGenerator->generate('delete_user', ['idCustomer' => $idCustomer, 'idUser' => $idUser], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'type' => 'DELETE',
+                ],
+                'add' => [
+                    'href' => $urlGenerator->generate('add_user', ['idCustomer' => $idCustomer], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'type' => 'POST',
+                ],
+            ],
         ];
 
         return $this->json($data);

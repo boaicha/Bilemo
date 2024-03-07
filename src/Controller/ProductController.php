@@ -14,6 +14,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ProductController extends AbstractController
 {
@@ -101,7 +102,7 @@ class ProductController extends AbstractController
      * @OA\Tag(name="product")
      */
     #[Route('/api/product/{id}', name: 'product_show', methods:['get'] )]
-    public function show(ManagerRegistry $doctrine, int $id): JsonResponse
+    public function show(ManagerRegistry $doctrine, int $id, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $product = $doctrine->getRepository(product::class)->find($id);
 
@@ -115,6 +116,16 @@ class ProductController extends AbstractController
             'name' => $product->getName(),
             'description' => $product->getDescription(),
             'price' => $product->getPrice(),
+            'links' => [
+                'self' => [
+                    'href' => $urlGenerator->generate('product_show', ['id' => $product->getId()], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'type' => 'GET',
+                ],
+                'all' => [
+                    'href' => $urlGenerator->generate('app_product', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'type' => 'GET',
+                ],
+            ],
         ];
 
         return $this->json($data);
